@@ -52,14 +52,6 @@ if "bpy" in locals():
 		imp.reload(import_ac3d)
 	if 'export_ac3d' in locals():
 		imp.reload(export_ac3d)
-
-def menu_func_import(self, context):
-	self.layout.operator(ImportAC3D.bl_idname, text='AC3D (.ac)')
-
-
-def menu_func_export(self, context):
-	self.layout.operator(ExportAC3D.bl_idname, text='AC3D (.ac)')
-
 ###
 # Moved to bottom for 2.8 rjensen
 ##
@@ -72,9 +64,6 @@ def menu_func_export(self, context):
 #	bpy.utils.unregister_module(__name__)
 #	bpy.types.INFO_MT_file_import.remove(menu_func_import)
 #	bpy.types.INFO_MT_file_export.remove(menu_func_export)
-
-if __name__ == "__main__":
-	register()
 
 class ImportAC3D(bpy.types.Operator, ImportHelper):
 	'''Import from AC3D file format (.ac)'''
@@ -353,20 +342,33 @@ class ExportAC3D(bpy.types.Operator, ExportHelper):
 
 		return {'FINISHED'}
 
+def menu_func_import(self, context):
+    self.layout.operator(ImportAC3D.bl_idname, text="AC3D (.ac)")
+
+def menu_func_export(self, context):
+    self.layout.operator(ExportAC3D.bl_idname, text='AC3D (.ac)')
+
+
 classes = (
     ImportAC3D,
     ExportAC3D,
 )
 
 def register():
-    from bpy.utils import register_class
     for cls in classes:
-        register_class(cls)
+        bpy.utils.register_class(cls)
+
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    from bpy.utils import unregister_class
-    for cls in classes:
-        unregister_class(cls)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+
+if __name__ == "__main__":
+    register()
 
