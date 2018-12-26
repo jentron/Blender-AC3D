@@ -97,30 +97,31 @@ class AcMat:
 		# shininess          : 0-128
 		# transparency       : 0-1
 		#
-		bl_mat.specular_shader = 'PHONG'
-		bl_mat.diffuse_color = self.rgb
-		bl_mat.diffuse_intensity = 1.0
-		bl_mat.ambient = (self.amb[0] + self.amb[1] + self.amb[2]) / 3.0
-		if self.import_config.use_amb_as_mircol:
-				bl_mat.mirror_color = self.amb
-		bl_mat.emit = ((self.emis[0] + self.emis[1] + self.emis[2]) / 3.0) * 2
-		if self.import_config.use_emis_as_mircol:
-				bl_mat.mirror_color = self.emis
-		bl_mat.specular_color = self.spec
-		bl_mat.specular_intensity = 1.0
+		# Turn off for now...
+		# bl_mat.specular_shader = 'PHONG'
+		# bl_mat.diffuse_color = self.rgb
+		# bl_mat.diffuse_intensity = 1.0
+		# bl_mat.ambient = (self.amb[0] + self.amb[1] + self.amb[2]) / 3.0
+		# if self.import_config.use_amb_as_mircol:
+		#		bl_mat.mirror_color = self.amb
+		# bl_mat.emit = ((self.emis[0] + self.emis[1] + self.emis[2]) / 3.0) * 2
+		# if self.import_config.use_emis_as_mircol:
+		#		bl_mat.mirror_color = self.emis
+		# bl_mat.specular_color = self.spec
+		# bl_mat.specular_intensity = 1.0
 
-		acMin = 0.0
-		acMax = 128.0
-		blMin = 1.0
-		blMax = 511.0
-		acRange = (acMax - acMin)  
-		blRange = (blMax - blMin)  
-		bl_mat.specular_hardness = int(round((((float(self.shi) - acMin) * blRange) / acRange) + blMin, 0))
+		# acMin = 0.0
+		# acMax = 128.0
+		# blMin = 1.0
+		# blMax = 511.0
+		# acRange = (acMax - acMin)  
+		# blRange = (blMax - blMin)  
+		# bl_mat.specular_hardness = int(round((((float(self.shi) - acMin) * blRange) / acRange) + blMin, 0))
 
-		bl_mat.alpha = 1.0 - self.trans
+		# bl_mat.alpha = 1.0 - self.trans
 		#if bl_mat.alpha < 1.0: this is disabled cause texture may need transparency to be set, even if material is opaque.
-		bl_mat.use_transparency = True#self.import_config.use_transparency
-		bl_mat.transparency_method = self.import_config.transparency_method
+		# bl_mat.use_transparency = True#self.import_config.use_transparency
+		# bl_mat.transparency_method = self.import_config.transparency_method
 		
 		return bl_mat
 
@@ -143,20 +144,20 @@ class AcMat:
 			else:
 				bl_mat = bpy.data.materials.new(self.name)
 				bl_mat = self.make_blender_mat(bl_mat)
-				bl_mat.use_face_texture = True
-				bl_mat.use_face_texture_alpha = True
+				# bl_mat.use_face_texture = True
+				# bl_mat.use_face_texture_alpha = True
 				
-				tex_slot = bl_mat.texture_slots.add()
-				tex_slot.texture = self.get_blender_texture(tex_name, texrep)
-				tex_slot.texture_coords = 'UV'
-				tex_slot.alpha_factor = 1.0
-				tex_slot.use_map_alpha = True
-				tex_slot.use = True
-				tex_slot.uv_layer = 'UVMap'
-				tex_slot.texture.repeat_x = 1#texrep[0]
-				tex_slot.texture.repeat_y = 1#texrep[1]
-				tex_slot.blend_type = 'MULTIPLY'
-				self.bmat_keys[tex_name+str(texrep[0])+'-'+str(texrep[1])] = bl_mat
+				# tex_slot = bl_mat.texture_slots.add()
+				# tex_slot.texture = self.get_blender_texture(tex_name, texrep)
+				# tex_slot.texture_coords = 'UV'
+				# tex_slot.alpha_factor = 1.0
+				# tex_slot.use_map_alpha = True
+				# tex_slot.use = True
+				# tex_slot.uv_layer = 'UVMap'
+				# tex_slot.texture.repeat_x = 1#texrep[0]
+				# tex_slot.texture.repeat_y = 1#texrep[1]
+				# tex_slot.blend_type = 'MULTIPLY'
+				# self.bmat_keys[tex_name+str(texrep[0])+'-'+str(texrep[1])] = bl_mat
 		return bl_mat
 
 	'''
@@ -369,7 +370,7 @@ class AcObj:
 			# cause the global_matrix is applied when making the children of world/scene.
 			self4 = self.rotation.to_4x4()
 			self3 = mathutils.Matrix.Translation(self.location)
-			self.import_config.global_matrix = self4 * self.import_config.global_matrix
+			# self.import_config.global_matrix = self4 @ self.import_config.global_matrix
 			self.import_config.global_matrix[0][3] = self.location[0]
 			self.import_config.global_matrix[1][3] = self.location[1]
 			self.import_config.global_matrix[2][3] = self.location[2]
@@ -572,17 +573,17 @@ class AcObj:
 		if self.bl_obj:
 			self3 = mathutils.Matrix.Translation(self.location)
 			self4 = self.rotation.to_4x4()
-			self.bl_obj.matrix_basis = self3 * self4
+			self.bl_obj.matrix_basis = self3 @ self4
 
 			if self.ac_parent and self.ac_parent.type.lower() == 'world':
 				matrix_basis = self.bl_obj.matrix_basis
-				matrix_basis = self.import_config.global_matrix * matrix_basis # order of this multiplication matters
+				matrix_basis = self.import_config.global_matrix @ matrix_basis # order of this multiplication matters
 				self.bl_obj.matrix_basis = matrix_basis
 
 			if not self.ac_parent:
 				# this is for the case where there is no world object
 				matrix_basis = self.bl_obj.matrix_basis
-				matrix_basis = self.import_config.global_matrix * matrix_basis # order of this multiplication matters
+				matrix_basis = self.import_config.global_matrix @ matrix_basis # order of this multiplication matters
 				self.bl_obj.matrix_basis = matrix_basis
 			
 			self.import_config.context.scene.objects.link(self.bl_obj)
