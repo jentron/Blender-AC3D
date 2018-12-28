@@ -99,7 +99,7 @@ class AcMat:
 		#
 		# Turn off for now...
 		# bl_mat.specular_shader = 'PHONG'
-		# bl_mat.diffuse_color = self.rgb
+		bl_mat.diffuse_color = self.rgb
 		# bl_mat.diffuse_intensity = 1.0
 		# bl_mat.ambient = (self.amb[0] + self.amb[1] + self.amb[2]) / 3.0
 		# if self.import_config.use_amb_as_mircol:
@@ -107,8 +107,8 @@ class AcMat:
 		# bl_mat.emit = ((self.emis[0] + self.emis[1] + self.emis[2]) / 3.0) * 2
 		# if self.import_config.use_emis_as_mircol:
 		#		bl_mat.mirror_color = self.emis
-		# bl_mat.specular_color = self.spec
-		# bl_mat.specular_intensity = 1.0
+		bl_mat.specular_color = self.spec
+		bl_mat.specular_intensity = 1.0
 
 		# acMin = 0.0
 		# acMax = 128.0
@@ -370,7 +370,7 @@ class AcObj:
 			# cause the global_matrix is applied when making the children of world/scene.
 			self4 = self.rotation.to_4x4()
 			self3 = mathutils.Matrix.Translation(self.location)
-			# self.import_config.global_matrix = self4 @ self.import_config.global_matrix
+			self.import_config.global_matrix = self4 @ self.import_config.global_matrix
 			self.import_config.global_matrix[0][3] = self.location[0]
 			self.import_config.global_matrix[1][3] = self.location[1]
 			self.import_config.global_matrix[2][3] = self.location[2]
@@ -587,9 +587,9 @@ class AcObj:
 				matrix_basis = self.import_config.global_matrix @ matrix_basis # order of this multiplication matters
 				self.bl_obj.matrix_basis = matrix_basis
 			
-			#self.import_config.context.scene.objects.link(self.bl_obj)
+			self.import_config.context.collection.objects.link(self.bl_obj)
 # There's a bug somewhere - this ought to work....
-			#self.import_config.context.scene.objects.active = self.bl_obj
+			# self.import_config.context.collection.objects.active = self.bl_obj
 #			bpy.ops.object.origin_set('ORIGIN_GEOMETRY', 'MEDIAN')
 
 			if self.hidden == True:
@@ -832,6 +832,7 @@ class ImportAC3D:
 		self.create_blender_data()
 
 		# Display as either textured solid (transparency only works in one direction) or as textureless solids (transparency works)
+		# FIXME: do we need this?
 		#for bl_screen in bpy.data.screens:
 			#for bl_area in bl_screen.areas:
 				#for bl_space in bl_area.spaces:
@@ -1002,8 +1003,8 @@ class ImportAC3D:
 				bpy.context.scene.objects.active = obj
 				bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 
-		#for obj in bpy.data.objects:
-			#obj.select = False
-		#for obj in top_level_objects:
+		for obj in bpy.data.objects:
+			obj.select_set(False)
+		for obj in top_level_objects:
 			# imported top level objects will be selected
-			# obj.select = True
+			obj.select_set(True)
