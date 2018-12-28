@@ -87,7 +87,29 @@ class AcMat:
 		# specular_color     : 0-1 vector
 		# specular_hardness  : 1-511
 		# alpha              : 0-1
-		#
+		##https://gifguide2code.com/2017/04/09/python-how-to-code-materials-in-blender-cycles/
+'''
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Anisotropic']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Anisotropic Rotation']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (0.8,0.8,0.8,1)
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Clearcoat']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Clearcoat Normal']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Clearcoat Roughness']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['IOR']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Metallic']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Normal']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Roughness']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Sheen']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Sheen Tint']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Specular']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Specular Tint']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Subsurface']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Subsurface Color']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Subsurface Radius']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Tangent']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Transmission']
+D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Transmission Roughness']
+'''
 		# AC3D:
 		# ========
 		# diffuse            : 0-1 vector
