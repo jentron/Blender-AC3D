@@ -526,7 +526,8 @@ class AcObj:
 						edge.use_smooth = False
 
 			# apply UV map
-			if has_uv:
+			# if has_uv:
+			if 0:
 				uvtex = me.uv_textures.new()
 				if uvtex:
 					uvtexdata = me.uv_layers.active.data[:]
@@ -586,9 +587,9 @@ class AcObj:
 				matrix_basis = self.import_config.global_matrix @ matrix_basis # order of this multiplication matters
 				self.bl_obj.matrix_basis = matrix_basis
 			
-			self.import_config.context.scene.objects.link(self.bl_obj)
+			#self.import_config.context.scene.objects.link(self.bl_obj)
 # There's a bug somewhere - this ought to work....
-			self.import_config.context.scene.objects.active = self.bl_obj
+			#self.import_config.context.scene.objects.active = self.bl_obj
 #			bpy.ops.object.origin_set('ORIGIN_GEOMETRY', 'MEDIAN')
 
 			if self.hidden == True:
@@ -831,11 +832,11 @@ class ImportAC3D:
 		self.create_blender_data()
 
 		# Display as either textured solid (transparency only works in one direction) or as textureless solids (transparency works)
-		for bl_screen in bpy.data.screens:
-			for bl_area in bl_screen.areas:
-				for bl_space in bl_area.spaces:
-					if bl_space.type == 'VIEW_3D':
-						bl_space.show_textured_solid = self.import_config.display_textured_solid
+		#for bl_screen in bpy.data.screens:
+			#for bl_area in bl_screen.areas:
+				#for bl_space in bl_area.spaces:
+					#if bl_space.type == 'VIEW_3D':
+						#bl_space.show_textured_solid = self.import_config.display_textured_solid
 
 
 		return None
@@ -1001,8 +1002,8 @@ class ImportAC3D:
 				bpy.context.scene.objects.active = obj
 				bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 
-		for obj in bpy.data.objects:
-			obj.select = False
-		for obj in top_level_objects:
+		#for obj in bpy.data.objects:
+			#obj.select = False
+		#for obj in top_level_objects:
 			# imported top level objects will be selected
-			obj.select = True
+			# obj.select = True
