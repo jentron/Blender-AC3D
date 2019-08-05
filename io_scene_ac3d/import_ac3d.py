@@ -88,28 +88,28 @@ class AcMat:
 		# specular_hardness  : 1-511
 		# alpha              : 0-1
 		##https://gifguide2code.com/2017/04/09/python-how-to-code-materials-in-blender-cycles/
-'''
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Anisotropic']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Anisotropic Rotation']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (0.8,0.8,0.8,1)
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Clearcoat']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Clearcoat Normal']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Clearcoat Roughness']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['IOR']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Metallic']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Normal']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Roughness']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Sheen']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Sheen Tint']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Specular']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Specular Tint']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Subsurface']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Subsurface Color']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Subsurface Radius']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Tangent']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Transmission']
-D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Transmission Roughness']
-'''
+		'''
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Anisotropic']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Anisotropic Rotation']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (0.8,0.8,0.8,1)
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Clearcoat']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Clearcoat Normal']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Clearcoat Roughness']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['IOR']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Metallic']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Normal']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Roughness']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Sheen']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Sheen Tint']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Specular']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Specular Tint']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Subsurface']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Subsurface Color']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Subsurface Radius']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Tangent']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Transmission']
+		D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Transmission Roughness']
+		'''
 		# AC3D:
 		# ========
 		# diffuse            : 0-1 vector
@@ -119,9 +119,17 @@ D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Transmission 
 		# shininess          : 0-128
 		# transparency       : 0-1
 		#
-		# Turn off for now...
-		# bl_mat.specular_shader = 'PHONG'
-		bl_mat.diffuse_color = self.rgb
+		acMin = 0.0
+		acMax = 128.0
+		blMin = 0.0
+		blMax = 1.0
+		acRange = (acMax - acMin)  
+		blRange = (blMax - blMin)  
+		bl_mat.roughness = (((float(self.shi) - acMin) * blRange) / acRange) + blMin
+# fixme: should have 4 entries?
+		# bl_mat.diffuse_color = self.rgb
+		bl_mat.use_nodes = True 
+		# bl_mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (1,0.5,0.1,1) #self.rgb
 		# bl_mat.diffuse_intensity = 1.0
 		# bl_mat.ambient = (self.amb[0] + self.amb[1] + self.amb[2]) / 3.0
 		# if self.import_config.use_amb_as_mircol:
@@ -129,16 +137,8 @@ D.materials['ac3dmat1'].node_tree.nodes['Principled BSDF'].inputs['Transmission 
 		# bl_mat.emit = ((self.emis[0] + self.emis[1] + self.emis[2]) / 3.0) * 2
 		# if self.import_config.use_emis_as_mircol:
 		#		bl_mat.mirror_color = self.emis
-		bl_mat.specular_color = self.spec
-		bl_mat.specular_intensity = 1.0
-
-		# acMin = 0.0
-		# acMax = 128.0
-		# blMin = 1.0
-		# blMax = 511.0
-		# acRange = (acMax - acMin)  
-		# blRange = (blMax - blMin)  
-		# bl_mat.specular_hardness = int(round((((float(self.shi) - acMin) * blRange) / acRange) + blMin, 0))
+		#bl_mat.specular_color = self.spec
+		#bl_mat.specular_intensity = 1.0
 
 		# bl_mat.alpha = 1.0 - self.trans
 		#if bl_mat.alpha < 1.0: this is disabled cause texture may need transparency to be set, even if material is opaque.
@@ -581,7 +581,7 @@ class AcObj:
 #							uvtex.data[i].image = line_material.texture_slots[0].texture.image
 #						uv_pointer += len(line.uv_refs)
 
-			me.show_double_sided = two_sided_lighting
+#			me.show_double_sided = two_sided_lighting
 			self.bl_obj.show_transparent = True#self.import_config.display_transparency
 
 			# apply subdivision modifier
@@ -591,7 +591,7 @@ class AcObj:
 				self.bl_obj.modifiers[subName].levels = self.subdiv
 				self.bl_obj.modifiers[subName].render_levels = self.subdiv
 				self.bl_obj.modifiers[subName].subdivision_type = 'CATMULL_CLARK'
-				self.bl_obj.modifiers[subName].use_subsurf_uv = True
+				# self.bl_obj.modifiers[subName].use_subsurf_uv = True
 
 		if self.bl_obj:
 			self3 = mathutils.Matrix.Translation(self.location)
