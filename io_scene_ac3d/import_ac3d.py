@@ -418,7 +418,7 @@ class AcObj:
         if self.type.lower() == 'world':
             self.name = self.import_config.ac_name
             
-        me = None
+        mesh = None
         if self.type.lower() == 'group':
             # Create an empty object
             self.bl_obj = bpy.data.objects.new(self.name, None)
@@ -427,8 +427,8 @@ class AcObj:
             meshname = self.name+".mesh"
             if len(self.data)>0:
                 meshname = self.data
-            me = bpy.data.meshes.new(meshname)
-            self.bl_obj = bpy.data.objects.new(self.name, me)
+            mesh = bpy.data.meshes.new(meshname)
+            self.bl_obj = bpy.data.objects.new(self.name, mesh)
             
         if self.type.lower() == 'light':
             # Create an light object
@@ -443,9 +443,9 @@ class AcObj:
             self.bl_obj.parent = self.ac_parent.bl_obj
 
         # make sure we have something to work with
-        if self.vert_list and me:
-            me.use_auto_smooth = self.use_crease#self.import_config.use_auto_smooth
-            me.auto_smooth_angle = radians(self.crease)
+        if self.vert_list and mesh:
+            mesh.use_auto_smooth = self.use_crease#self.import_config.use_auto_smooth
+            mesh.auto_smooth_angle = radians(self.crease)
             two_sided_lighting = False
             has_uv = False
             for surf in self.surf_list:
@@ -477,15 +477,15 @@ class AcObj:
                             TRACE("Error getting material {0} '{1}'".format(surf.mat_index, self.tex_name))
 
                         fm_index = 0
-                        if not bl_material.name in me.materials:
-                            me.materials.append(bl_material)
-                            fm_index = len(me.materials)-1
+                        if not bl_material.name in mesh.materials:
+                            mesh.materials.append(bl_material)
+                            fm_index = len(mesh.materials)-1
                         else:
-                            for mat in me.materials:
+                            for mat in mesh.materials:
                                 if mat == bl_material:
                                     break
                                 fm_index += 1
-                            if fm_index > len(me.materials):
+                            if fm_index > len(mesh.materials):
                                 TRACE("Failed to find material index")
                                 fm_index = 0
                         self.face_mat_list.append(fm_index)
@@ -500,17 +500,17 @@ class AcObj:
                     if bl_material == None:
                         TRACE("Error getting material {0} '{1}'".format(surf.mat_index, self.tex_name))
 
-                    if not bl_material.name in me.materials:
+                    if not bl_material.name in mesh.materials:
                         # we here add the lines material to the object, but does never assign it to any edges.
                         # reason is edges cannot have material assigned.
                         # only reason we add it is in case the object only contains edges,
                         # so when exporting, that material (if there is only 1) will be assigned to every edge in the object.
-                        me.materials.append(bl_material)
+                        mesh.materials.append(bl_material)
             #print(len(self.vert_list))
-            me.from_pydata(self.vert_list, self.edge_list, self.face_list)
+            mesh.from_pydata(self.vert_list, self.edge_list, self.face_list)
 
             # set smooth flag and apply material to each face
-            for no, poly in enumerate(me.polygons):
+            for no, poly in enumerate(mesh.polygons):
                 poly.material_index = self.face_mat_list[no]
                 if self.surf_face_list[no].flags.shaded == True:
                     poly.use_smooth = True
@@ -524,17 +524,17 @@ class AcObj:
                 # notice that an edge_key is actually a pair of indices to vertices
                 #
                 faceEdgeKeys = set([])
-                for poly in me.polygons:
+                for poly in mesh.polygons:
                     for key in poly.edge_keys:
                         faceEdgeKeys.add(key)
                 
-                allEdgeKeys  = set( me.edge_keys )
+                allEdgeKeys  = set( mesh.edge_keys )
                 freeEdgeKeys = allEdgeKeys.difference( faceEdgeKeys )
                 #print(str(len(faceEdgeKeys))+' '+str(len(allEdgeKeys))+' '+str(len(freeEdgeKeys)))
 
                 freeEdges = set([])
                 for f_edge in freeEdgeKeys:
-                    for b_edge in me.edges:
+                    for b_edge in mesh.edges:
                         if b_edge.key == f_edge:
                             freeEdges.add(b_edge)
 
@@ -548,9 +548,9 @@ class AcObj:
             # apply UV map
             #if has_uv:
             if 0:
-                uvtex = me.uv_textures.new()
+                uvtex = mesh.uv_textures.new()
                 if uvtex:
-                    uvtexdata = me.uv_layers.active.data[:]
+                    uvtexdata = mesh.uv_layers.active.data[:]
                     
                     uv_pointer = 0
                     for i, face in enumerate(self.face_list):
@@ -562,7 +562,7 @@ class AcObj:
                                 uvtexdata[uv_pointer+vert_index].uv = [surf.uv_refs[vert_index][0]*self.texrep[0]+self.texoff[0], surf.uv_refs[vert_index][1]*self.texrep[1]+self.texoff[1]]
                             if len(self.tex_name):
                                 # we do the check here to allow for import of UV without texture
-                                surf_material = me.materials[self.face_mat_list[i]]
+                                surf_material = mesh.materials[self.face_mat_list[i]]
                                 
                                 uvtex.data[i].image = surf_material.texture_slots[0].texture.image
                             uv_pointer += len(surf.uv_refs)
@@ -574,12 +574,12 @@ class AcObj:
 #                            uvtexdata[uv_pointer+vert_index].uv = [line.uv_refs[vert_index][0]*self.texrep[0]+self.texoff[0], line.uv_refs[vert_index][1]*self.texrep[1]+self.texoff[1]]
 #                        if len(self.tex_name):
 #                            # we do the check here to allow for import of UV without texture
-#                            line_material = me.materials[self.face_mat_list[i]]
+#                            line_material = mesh.materials[self.face_mat_list[i]]
 #                            
 #                            uvtex.data[i].image = line_material.texture_slots[0].texture.image
 #                        uv_pointer += len(line.uv_refs)
 
-#            me.show_double_sided = two_sided_lighting
+#            mesh.show_double_sided = two_sided_lighting
             self.bl_obj.show_transparent = True#self.import_config.display_transparency
 
             # apply subdivision modifier
@@ -636,10 +636,10 @@ class AcObj:
                 children.append(child[0])
 
 
-        if me:
-#            me.calc_normals()
-            me.validate()
-            me.update(calc_edges=True)
+        if mesh:
+#            mesh.calc_normals()
+            mesh.validate()
+            mesh.update(calc_edges=True)
 
         if self.bl_obj:
             # return it so that if its top-level it can be selected.
