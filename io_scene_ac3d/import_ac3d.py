@@ -74,7 +74,6 @@ class AcMat:
 		self.bmat_keys.setdefault(None)
 		self.bl_material = None		# untextured material
 		self.import_config = import_config
-
 	def make_blender_mat(self, bl_mat):
 		# Blender:
 		# ========
@@ -126,10 +125,10 @@ class AcMat:
 		acRange = (acMax - acMin)  
 		blRange = (blMax - blMin)  
 		bl_mat.roughness = (((float(self.shi) - acMin) * blRange) / acRange) + blMin
-# fixme: should have 4 entries?
-		# bl_mat.diffuse_color = self.rgb
+		local_rgb = [self.rgb[0],self.rgb[1],self.rgb[2],1 - self.trans]
+		print(local_rgb)
 		bl_mat.use_nodes = True 
-		# bl_mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (1,0.5,0.1,1) #self.rgb
+		bl_mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = local_rgb
 		# bl_mat.diffuse_intensity = 1.0
 		# bl_mat.ambient = (self.amb[0] + self.amb[1] + self.amb[2]) / 3.0
 		# if self.import_config.use_amb_as_mircol:
@@ -139,7 +138,6 @@ class AcMat:
 		#		bl_mat.mirror_color = self.emis
 		#bl_mat.specular_color = self.spec
 		#bl_mat.specular_intensity = 1.0
-
 		# bl_mat.alpha = 1.0 - self.trans
 		#if bl_mat.alpha < 1.0: this is disabled cause texture may need transparency to be set, even if material is opaque.
 		# bl_mat.use_transparency = True#self.import_config.use_transparency
@@ -158,11 +156,10 @@ class AcMat:
 			if bl_mat == None:
 				bl_mat = bpy.data.materials.new(self.name)
 				bl_mat = self.make_blender_mat(bl_mat)
-
 				self.bl_material = bl_mat
 		else:
-			if (tex_name+str(texrep[0])+'-'+str(texrep[1])) in self.bmat_keys:
-				bl_mat = self.bmat_keys[tex_name+str(texrep[0])+'-'+str(texrep[1])]
+			if (self.name) in self.bmat_keys:
+				bl_mat = self.bmat_keys[self.name]
 			else:
 				bl_mat = bpy.data.materials.new(self.name)
 				bl_mat = self.make_blender_mat(bl_mat)
@@ -179,7 +176,8 @@ class AcMat:
 				# tex_slot.texture.repeat_x = 1#texrep[0]
 				# tex_slot.texture.repeat_y = 1#texrep[1]
 				# tex_slot.blend_type = 'MULTIPLY'
-				# self.bmat_keys[tex_name+str(texrep[0])+'-'+str(texrep[1])] = bl_mat
+				self.bmat_keys[bl_mat.name] = bl_mat
+				self.name = bl_mat.name
 		return bl_mat
 
 	'''
