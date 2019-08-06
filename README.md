@@ -1,10 +1,10 @@
-# Blender-AC3D - Version 2.26
+# Blender-AC3D - Version 2.80
 
 ## What is it?
-It's a few python scripts to import/export Inivis AC3D data into and out of Blender 2.63+. For earlier Blender 2.6x versions you need an older revision of the plugin (https://github.com/majic79/Blender-AC3D/tree/BL2.62)
+It's a few python scripts to import/export Inivis AC3D data into and out of Blender 2.80+. For earlier Blender 2.7x versions you need an older revision of the plugin (https://github.com/majic79/Blender-AC3D/)
 
-## Why blender 2.6/2.7?
-Because in the migration from 2.4X to 2.5, it lost AC3D support. This mod aims to bring that back to 2.6 and 2.7
+## Why blender 2.8?
+Because in the migration from 2.7X to 2.8, it lost AC3D support. This mod aims to bring that back to 2.8
 
 ## So it had it before?
 Yes, this is mainly a port of those files to enable the import/export of .ac files in blender 2.5
@@ -22,6 +22,8 @@ Go to File->Import->AC3D (.ac), select a file and let it do the work
 In latest Blender versions mirror color is white per default, and that confused many users that what they exported would get totally emissive per default.
 
 ## Known Issues:
+This is an early WIP nothing works well.
+
 If exporting when in Edit mode, it will not export the last edits done in Edit mode. Best is to export when in Object mode.
 
 When importing lines, they cannot be assigned UV coordinates as Blender does not support that.
@@ -37,7 +39,7 @@ Exporter will export all materials in object material slots, even if they are no
 
 ## Follow the discussion at:
 
-http://www.flightgear.org/forums/viewtopic.php?f=18&t=13442
+(dead link) http://www.flightgear.org/forums/viewtopic.php?f=18&t=13442
 
 ## Complete file format specification, anno 2017
 
