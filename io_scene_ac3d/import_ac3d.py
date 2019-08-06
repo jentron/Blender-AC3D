@@ -546,9 +546,9 @@ class AcObj:
                         edge.use_smooth = False
 
             # apply UV map
-            #if has_uv:
-            if 0:
-                uvtex = mesh.uv_textures.new()
+            if has_uv:
+            #if 0:
+                uvtex = mesh.uv_layers.new()
                 if uvtex:
                     uvtexdata = mesh.uv_layers.active.data[:]
                     
@@ -563,8 +563,8 @@ class AcObj:
                             if len(self.tex_name):
                                 # we do the check here to allow for import of UV without texture
                                 surf_material = mesh.materials[self.face_mat_list[i]]
-                                
-                                uvtex.data[i].image = surf_material.texture_slots[0].texture.image
+                                #AttributeError: 'Material' object has no attribute 'texture_slots'
+                                # uvtex.data[i].image = surf_material.texture_slots[0].texture.image
                             uv_pointer += len(surf.uv_refs)
 # uvtexdata does not contain data on lines, so lines cannot be applied UV, sadly
 #                    for i, edge in enumerate(self.line_list):
